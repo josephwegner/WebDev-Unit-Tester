@@ -1,0 +1,29 @@
+<html>
+<head>
+<title>WebDev Unit Tester</title>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script>
+<script type="text/javascript" src="clientTests.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	console.log(clientTests);
+	for(var i=0, max=clientTests.length; i<max; i++) {
+		$("div#tests").append("<div class='clientTest' id='" + i + "'>" + clientTests[i].title + "<img src='testing.gif' /></div>");
+	}
+
+	$("div.clientTest").each(function() {
+		var testResult = clientTests[$(this).attr('id')].test();
+
+		if(testResult === true) {
+			$(this).children("img").attr('src', 'check.gif');
+		} else {
+			$(this).children("img").attr('src', 'x.gif');
+			$(this).append(testResult);
+		}
+	});
+});	
+</script>
+</head>
+<body>
+<div id="tests"></div>
+<div id="sandbox"></div>
+</body>
