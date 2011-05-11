@@ -5,7 +5,8 @@
 <script type="text/javascript" src="clientTests.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-	console.log(clientTests);
+	$("div#tests").append("<h2>Client Tests</h2><br>");
+
 	for(var i=0, max=clientTests.length; i<max; i++) {
 		$("div#tests").append("<div class='clientTest' id='" + i + "'>" + clientTests[i].title + "<img src='testing.gif' /></div>");
 	}
@@ -18,6 +19,39 @@ $(document).ready(function() {
 		} else {
 			$(this).children("img").attr('src', 'x.gif');
 			$(this).append(testResult);
+		}
+	});
+
+	$.ajax({
+		url: "serverTests.php",
+		success: function(msg) {
+			var resp = eval('(' + msg + ')');
+			
+			$("div#tests").append("<h2>Server Test</h2><br>");
+
+			for(var i=0, max=resp.length; i<max; i++) {
+				$("div#tests").append("<div class='serverTest' id='" + i + "'>" + resp[i] + "<img src='testing.gif' /></div>");	
+			}
+
+			$("div.serverTest").each(function() {
+				var obj = this;
+				$.ajax({
+					type: "POST",
+					url: "serverTests.php",
+					data: {"test": $(this).attr('id')},
+					success: function(msg) {
+						var resp = eval('(' + msg + ')');
+			
+						if(resp.pass) {
+							$(obj).children('img').attr('src', 'check.gif');
+						} else {
+							$(obj).children('img').attr('src', 'x.gif');
+							$(obj).append(resp.err);
+						}
+					}
+				});
+			});
+			
 		}
 	});
 });	
