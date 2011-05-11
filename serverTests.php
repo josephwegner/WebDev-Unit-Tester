@@ -5,10 +5,7 @@ if(isset($_POST['test'])) {
 	$test = intval($_POST['test']);
 }
 
-$tests = Array(
-	"Pass Test",//1
-	"Fail Test"//2
-);
+include("tests.php");
 
 if(is_numeric($test)) {
 	$methods = get_class_methods('testSuite');
@@ -24,21 +21,5 @@ if(is_numeric($test)) {
 	die();
 }
 
-class testSuite {
-	public $titles = Array();
 
-	//TEST 1
-	//Title: Pass Test
-	//Should just pass
-	static function passTest() {
-		return true; //just pass
-	}
-
-	//TEST 2
-	//Title: Fail Test
-	//Should just fail
-	static function failTest() {
-		return "This test was supposed to fail"; //just fail
-	}
-}
 ?>
