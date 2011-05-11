@@ -1,0 +1,12 @@
+.clientTest > img, .serverTest > img {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.fail {
+	color: red;
+}
+
+.pass {
+	color: green;
+}	

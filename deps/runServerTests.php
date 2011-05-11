@@ -5,7 +5,7 @@ if(isset($_POST['test'])) {
 	$test = intval($_POST['test']);
 }
 
-include("tests.php");
+include("serverTests.php");
 
 if(is_numeric($test)) {
 	$methods = get_class_methods('testSuite');

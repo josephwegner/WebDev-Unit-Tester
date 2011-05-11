@@ -1,53 +1,64 @@
 <html>
 <head>
 <title>WebDev Unit Tester</title>
+<link rel="stylesheet" type="text/css" href="deps/style.css" />
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script>
-<script type="text/javascript" src="clientTests.js"></script>
+<script type="text/javascript" src="deps/clientTests.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
 	$("div#tests").append("<h2>Client Tests</h2><br>");
 
 	for(var i=0, max=clientTests.length; i<max; i++) {
-		$("div#tests").append("<div class='clientTest' id='" + i + "'>" + clientTests[i].title + "<img src='testing.gif' /></div>");
+		$("div#tests").append("<div class='clientTest notdone' id='" + i + "'>" + clientTests[i].title + "<img src='deps/images/testing.gif' /></div>");
 	}
 
 	$("div.clientTest").each(function() {
 		var testResult = clientTests[$(this).attr('id')].test();
 
 		if(testResult === true) {
-			$(this).children("img").attr('src', 'check.gif');
+			$(this).children("img").attr('src', 'deps/images/check.gif');
+			$(this).addClass("pass");
 		} else {
-			$(this).children("img").attr('src', 'x.gif');
+			$(this).children("img").attr('src', 'deps/images/x.gif');
 			$(this).append(testResult);
+			$(this).addClass('fail');
 		}
+		
+		$(this).removeClass('notdone');
 	});
 
 	$.ajax({
-		url: "serverTests.php",
+		url: "deps/runServerTests.php",
 		success: function(msg) {
 			var resp = eval('(' + msg + ')');
 			
-			$("div#tests").append("<h2>Server Test</h2><br>");
+			$("div#tests").append("<h2>Server Tests</h2><br>");
 
 			for(var i=0, max=resp.length; i<max; i++) {
-				$("div#tests").append("<div class='serverTest' id='" + i + "'>" + resp[i] + "<img src='testing.gif' /></div>");	
+				$("div#tests").append("<div class='serverTest notdone' id='" + i + "'>" + resp[i] + "<img src='deps/images/testing.gif' /></div>");	
 			}
 
 			$("div.serverTest").each(function() {
 				var obj = this;
 				$.ajax({
 					type: "POST",
-					url: "serverTests.php",
+					url: "deps/runServerTests.php",
 					data: {"test": $(this).attr('id')},
 					success: function(msg) {
 						var resp = eval('(' + msg + ')');
 			
 						if(resp.pass) {
-							$(obj).children('img').attr('src', 'check.gif');
+							$(obj).children('img').attr('src', 'deps/images/check.gif');
+							$(obj).addClass("pass");
 						} else {
-							$(obj).children('img').attr('src', 'x.gif');
+							$(obj).children('img').attr('src', 'deps/images/x.gif');
 							$(obj).append(resp.err);
+							$(obj).addClass('fail');
 						}
+				
+						$(obj).removeClass('notdone');
+						
+						if($("div.notdone").size() < 1) testsFinished();
 					}
 				});
 			});
@@ -55,6 +66,16 @@ $(document).ready(function() {
 		}
 	});
 });	
+
+function testsFinished() {
+	var go = true;
+
+	if($("div.fail").size() > 0) {
+		go = confirm("There were errors in your tests.  Would you like to leave this page and head to your index?");
+	}
+
+	if(go) window.location = goAfter;
+}
 </script>
 </head>
 <body>
